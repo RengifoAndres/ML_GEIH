@@ -1,0 +1,62 @@
+
+The Journal of Development Studies 
+https://www.tandfonline.com/journals/fjds20
+
+
+¬
+Arroja visión país y visión territorial tipo perfil ETC
+
+Educacion inicial
+Población atendida
+
+Preescolar, basica y media
+Matricula por sector, area, sector
+numero de estudiantes por docente por sector
+maximo nivel educativo de docentes y directivos en sector oficial
+
+sedes
+numero de sedes por sector y area
+sedes con infraestructura tecnologica
+
+calidad
+promedio saber 11 por sector
+p% estudiantes por nivel de desempeño
+
+cobertura y eficiencia
+cobertura neta por nivel
+permanencia (deserción, repitencia y reprobación)
+tránsito inmediato por nivel
+
+Recursos e intervenciones
+Gasto total educación PGN
+Monto total del SPG
+Monto total del SGR
+Monto total recursos propios
+Cantidad de iniciativas y de organizaciones
+iniciativas por categoría
+
+educación superior (sin datos para 2023 solo 2022)
+Matrícula por nivel, sector, sexo
+número de docentes y administrativos
+docentes por sector y caracter de la IES
+Número de IES, número de programas, número de sedes principales y seccionales
+% IES acreditadas
+puntaje promedio saber pro y TyT por sector
+
+VISORES INDEPENDIENTES
+primera infancia: unidades de servicio y población atendida
+preescolar, básica y media: caracterización e sedes; cobertura y matrícula; permanencia; trayectorias educativas (tasa de tránsito nacional y por municipio); progreso; saber 11 por sede; saber 3, 5 y 9 por municipio
+modulo de secretarios de educación con ranking por meses en el cargo, maximo nivel educativo, género, experiencia
+
+en educación terciaria
+también tiene módulo de ETDH sedes, matrícula y certificados
+
+también tiene comparaciones internacionales con PISA, ERCE, docentes y financiación
+
+
+
+SIIPE – Sistema de Información de Iniciativas y Programas en Educación
+Con un total de 2.378 iniciativas registradas, el mapa de iniciativas es una versión ampliada de las intervenciones del sector público y privado, para identificar y analizar con mayor profundidad los indicadores territoriales en las instituciones educativas donde tienen lugar.
+
+La Fundación Empresarios por la Educación, en alianza con el Centro Nacional de Consultoria y con el apoyo de la Fondation Botnar, presenta los resultados de la medición de la Encuesta de Opinión en Educación realizado en el primer semestre de 2024, dirigida a jóvenes entre los 12 y 28 años. Pregunta por acceso, evaluación, aprendizaje, transiciones, salud mental, aspiraciones, bienestar, barreras, calidad.
+Tienen resultados a nivel nacional, urban y rural, Bogotá, Cali y Valle, Medellín y Antioquia, Barranquilla y región caribe, Manizales y región central, amazonía y orinoquía, quibdo y región pacífica
