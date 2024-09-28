@@ -48,3 +48,4 @@ docs
 tests/testthat/Rplots.pdf
 !pkgdown/assets/*.pdf
 /code/ML/.Rproj.user
+/code/ML/.Rproj.user
