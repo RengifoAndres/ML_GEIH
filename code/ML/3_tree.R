@@ -6,11 +6,7 @@
 library(pacman)
 
 p_load(tidyverse, 
-     #  rio, 
-      # rpart, 
-      # rpart.plot, 
        randomForest, 
-      # caret, 
        pROC, 
        foreach,
        doParallel, 
@@ -21,12 +17,18 @@ rm(list=ls())
 
 ########## paths
 
-root<- "C:\\Users\\Andres Felipe\\OneDrive - Universidad de los Andes\\Research Proyects\\ML_GEIH"
-root<- "..\\..\\"
-data<- paste0(root, "\\data")
-raw<- paste0(data, "\\raw")
-geih2012<- paste0(raw, "\\GEIH\\2012")
-clean<-  paste0(data, "\\clean_prediction\\2012")
+if (getwd()=="/export/home/rcsguest/rcs_arengifojaramill/Documents/GitHub/ML_GEIH/code/ML") {
+  root<- "/export/home/rcsguest/rcs_arengifojaramill/Documents/GitHub/ML_GEIH"
+  
+}  else {
+  root<- "C:/Users/Andres Felipe/OneDrive - Universidad de los Andes/Research Proyects/ML_GEIH"
+}
+
+
+data<- paste0(root, "/data")
+raw<- paste0(data, "/raw")
+geih2012<- paste0(raw, "/GEIH/2012")
+clean<-  paste0(data, "/clean_prediction/2012")
 
 
 
@@ -34,7 +36,7 @@ clean<-  paste0(data, "\\clean_prediction\\2012")
 ######## Import and prepare data.
 ############
 
-workers<- readRDS(paste0(clean, "\\employees_analysis.rds"))
+workers<- readRDS(paste0(clean, "/employees_analysis.rds"))
 
 discart<- c("house" , "household","person",   "Hogar", "P6016",  
             "oci", "job_type", "unionized" , "student", "monthly_mw50", "monthly_mw75",
@@ -47,16 +49,16 @@ table(workers_final$mw_worker75)[2]/nrow(workers_final)
 
 
 
-######## random forest 
+######## random forest Set Parameters
+param_combinations<- expand.grid(mtry= seq(5, 40 ,5) ,
+                                 maxnodes=seq(5, 30,5))
+
 ### set parallel 
-
-param_combinations<- expand.grid(mtry= seq(1, 22 ,3) ,
-                                 maxnodes=seq(20, 50,5))
-
-num_cores <-  5
+num_cores <-  6
 cl <- makeCluster(num_cores)    # Create a cluster with available cores
 registerDoParallel(cl)          # Register the parallel backend
 
+start_time <- Sys.time() ## set time to count
 
 cv_results_rf<- foreach(i= 1:10, .combine = rbind,  .packages = c( "tidyverse", "randomForest","PRROC") ) %dopar% {
   
@@ -78,7 +80,7 @@ cv_results_rf<- foreach(i= 1:10, .combine = rbind,  .packages = c( "tidyverse", 
     
   rf<- randomForest(x=X, 
                       y=y, 
-                      ntree= 100, 
+                      ntree= 500, 
                       mtry= param_combinations$mtry[l], 
                       maxnodes= param_combinations$maxnodes[l],
                       importance= FALSE, 
@@ -100,6 +102,83 @@ cv_results_rf<- foreach(i= 1:10, .combine = rbind,  .packages = c( "tidyverse", 
 }
 
 stopCluster(cl)
+
+end_time <- Sys.time()
+
+# Display the time difference
+execution_time <- end_time - start_time
+execution_time
+
+##### preparing the results for plot
+
+param_combinations<- param_combinations %>%
+  mutate(model=row_number())
+
+cv_results_rf<- cv_results_rf %>%
+  full_join(param_combinations)
+
+
+
+#### Plot 
+
+summary <- cv_results_rf %>%
+  group_by(model) %>%
+  summarise(
+    mean_auPR = mean(auPR),
+    se_auPR = sd(auPR) / sqrt(n()),
+    model = unique(model)  # Ensure we have the same iteration numbers
+  )
+
+
+
+
+
+# Combined plot with iteration number on x-axis and lambda as color scale
+ggplot(cv_results_rf) +
+  geom_boxplot( aes(x = factor(model), y = auPR, fill = mtry), outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  geom_point(data = summary, aes(x = factor(model), y = mean_auPR), size = 1, color = "black") +
+  geom_errorbar(data = summary, aes(x = factor(model), ymin = mean_auPR - se_auPR, ymax = mean_auPR + se_auPR), width = 0.2, color = "blue") +
+  labs(title = "",
+       x = "Model",
+       y = "AUC",
+       fill = "mtry") +
+  scale_fill_gradient(low = "#FFDDC1", high = "#FF5500") +  # Scale color for the fill based on lambda
+  theme_classic(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "right",  # Move legend to the right for better space utilization
+    axis.text.x = element_text(angle = 90, hjust = 1, size = 7),  # Rotate x-axis labels and adjust size
+    axis.text.y = element_text(size = 12),  # Adjust y-axis text size
+    axis.title = element_text(size = 14)
+  )
+
+
+
+
+summary2 <- cv_results_rf %>%
+  group_by(mtry) %>%
+  summarise(
+    mean_auPR = mean(auPR),
+    se_auPR = sd(auPR) / sqrt(n()),
+  )
+
+ggplot(summary2) +
+  geom_errorbar( aes(x = factor(mtry), ymin = mean_auPR - se_auPR, ymax = mean_auPR + se_auPR), width = 0.2, color = "blue") +
+  theme_classic(base_size = 15) 
+
+#####
+
+summary2 <- cv_results_rf %>%
+  group_by(maxnodes) %>%
+  summarise(
+    mean_auPR = mean(auPR),
+    se_auPR = sd(auPR) / sqrt(n()),
+  )
+
+ggplot(summary2) +
+  geom_errorbar( aes(x = factor(maxnodes), ymin = mean_auPR - se_auPR, ymax = mean_auPR + se_auPR), width = 0.2, color = "blue") +
+  theme_classic(base_size = 15) 
+
 
 #########################
 ## test 
