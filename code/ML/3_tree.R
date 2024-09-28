@@ -22,6 +22,7 @@ rm(list=ls())
 ########## paths
 
 root<- "C:\\Users\\Andres Felipe\\OneDrive - Universidad de los Andes\\Research Proyects\\ML_GEIH"
+root<- "..\\..\\"
 data<- paste0(root, "\\data")
 raw<- paste0(data, "\\raw")
 geih2012<- paste0(raw, "\\GEIH\\2012")
