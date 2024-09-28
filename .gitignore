@@ -47,3 +47,4 @@ docs
 /*.docx
 tests/testthat/Rplots.pdf
 !pkgdown/assets/*.pdf
+/code/ML/.Rproj.user
