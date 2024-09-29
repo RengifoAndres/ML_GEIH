@@ -52,5 +52,35 @@ workers_final<-workers%>%
 
 table(workers_final$mw_worker75)[2]/nrow(workers_final)
 
-
 ## use the function boosting() with formula. 
+
+
+########## Test
+#########
+
+
+
+train<- workers_final %>%
+  filter(fold==4 )
+test<- workers_final %>%
+  filter(fold==1 )
+
+y<- train$mw_worker75
+X<- model.matrix(mw_worker75~.-1 -fold, train )
+
+X_test<- model.matrix(mw_worker75~.-1 -fold, test )
+y_test<-  test$mw_worker75
+
+
+ada<- boosting(mw_worker75~. -fold, 
+                 data=train, 
+               mfinal = 10, 
+               coeflearn = 'Breiman', 
+               boos=TRUE,
+               rpart.control(maxdepth = 1))
+
+
+
+
+
+
