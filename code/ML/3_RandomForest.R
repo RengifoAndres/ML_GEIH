@@ -48,13 +48,12 @@ workers_final<-workers%>%
 table(workers_final$mw_worker75)[2]/nrow(workers_final)
 
 
-
 ######## random forest Set Parameters
 param_combinations<- expand.grid(mtry= seq(5, 40 ,5) ,
                                  maxnodes=seq(5, 30,5))
 
 ### set parallel 
-num_cores <-  6
+num_cores <-  8
 cl <- makeCluster(num_cores)    # Create a cluster with available cores
 registerDoParallel(cl)          # Register the parallel backend
 
@@ -109,6 +108,11 @@ end_time <- Sys.time()
 execution_time <- end_time - start_time
 execution_time
 
+
+
+
+################ PLOTS #######
+
 ##### preparing the results for plot
 
 param_combinations<- param_combinations %>%
@@ -116,8 +120,6 @@ param_combinations<- param_combinations %>%
 
 cv_results_rf<- cv_results_rf %>%
   full_join(param_combinations)
-
-
 
 #### Plot 
 
