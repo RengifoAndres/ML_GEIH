@@ -49,8 +49,8 @@ table(workers_final$mw_worker75)[2]/nrow(workers_final)
 
 
 ######## random forest Set Parameters
-param_combinations<- expand.grid(mtry= seq(5, 40 ,5) ,
-                                 maxnodes=seq(5, 30,5))
+param_combinations<- expand.grid(mtry= seq(40, 80 ,10) ,
+                                 maxnodes=seq(2, 40,5))
 
 ### set parallel 
 num_cores <-  8
@@ -79,7 +79,7 @@ cv_results_rf<- foreach(i= 1:10, .combine = rbind,  .packages = c( "tidyverse", 
     
   rf<- randomForest(x=X, 
                       y=y, 
-                      ntree= 500, 
+                      ntree= 300, 
                       mtry= param_combinations$mtry[l], 
                       maxnodes= param_combinations$maxnodes[l],
                       importance= FALSE, 
@@ -109,9 +109,7 @@ execution_time <- end_time - start_time
 execution_time
 
 
-
-
-################ PLOTS #######
+################ PLOTS ################
 
 ##### preparing the results for plot
 
@@ -121,7 +119,7 @@ param_combinations<- param_combinations %>%
 cv_results_rf<- cv_results_rf %>%
   full_join(param_combinations)
 
-#### Plot 
+#### Plot by model
 
 summary <- cv_results_rf %>%
   group_by(model) %>%
@@ -130,9 +128,6 @@ summary <- cv_results_rf %>%
     se_auPR = sd(auPR) / sqrt(n()),
     model = unique(model)  # Ensure we have the same iteration numbers
   )
-
-
-
 
 
 # Combined plot with iteration number on x-axis and lambda as color scale
