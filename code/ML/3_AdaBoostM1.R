@@ -58,8 +58,6 @@ table(workers_final$mw_worker75)[2]/nrow(workers_final)
 ########## Test
 #########
 
-
-
 train<- workers_final %>%
   filter(fold==4 )
 test<- workers_final %>%
