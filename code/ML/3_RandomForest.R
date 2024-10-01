@@ -47,7 +47,6 @@ workers_final<-workers%>%
 
 table(workers_final$mw_worker75)[2]/nrow(workers_final)
 
-
 ######## random forest Set Parameters
 param_combinations<- expand.grid(mtry= seq(40, 80 ,10) ,
                                  maxnodes=seq(2, 40,5))
@@ -67,9 +66,10 @@ cv_results_rf<- foreach(i= 1:10, .combine = rbind,  .packages = c( "tidyverse", 
     filter(fold==i )
   
   y<- train$mw_worker75
-  X<- model.matrix(mw_worker75~.-1 -fold, train )
-  
-  X_test<- model.matrix(mw_worker75~.-1 -fold, test )
+  X<- model.matrix(mw_worker75~. -fold, train )
+  X<- X[, 2:ncol(X)]
+  X_test<- model.matrix(mw_worker75~. -fold, test )
+  X_test<- X[, 2:ncol(X_test)]
   y_test<-  test$mw_worker75
   
   
@@ -183,24 +183,27 @@ ggplot(summary2) +
 
 
 train<- workers_final %>%
-  filter(fold!=1 )
+  filter(fold>5 )
 test<- workers_final %>%
-  filter(fold==1 )
+  filter(fold<=5 )
 
 y<- train$mw_worker75
-X<- model.matrix(mw_worker75~.-1 -fold, train )
+X<- model.matrix(mw_worker75~. -fold, train )
+X<- X[, 2:ncol(X)]
 
-X_test<- model.matrix(mw_worker75~.-1 -fold, test )
+X_test<- model.matrix(mw_worker75~. -fold, test )
+X_test<- X_test[, 2:ncol(X_test)]
+
 y_test<-  test$mw_worker75
 
 
 rf<- randomForest(x=X, 
                   y=y, 
-                  ntree= 50, 
-                  mtry= 5, 
-                  maxnodes= 50,
+                  ntree= 300, 
+                  mtry= 130, 
+                  maxnodes= 5,
                   importance= FALSE, 
-                  nodesize= 50)
+                  nodesize= 25)
 
 
 getTree(rf, k=1, labelVar=TRUE)
@@ -216,27 +219,23 @@ areauPR<- pr$auc.integral
 areauPR
 
 
-auc_value <- roc(y_test, predictions[,2])$auc
-auc_value
 
-
-
-for (l in 1:length(param_combinations)){
-print(l)
-  }
-
-predictions<- predict(myrf, X_test ,type= "response")
+predictions<- predict(rf, X_test ,type= "response") 
+p_load(caret)
 confusionMatrix(data = predictions, reference = y_test, positive="Yes")
 
-predictions<- predict(myrf, X_test ,type= "prob")
+predictions<- predict(rf, X_test ,type= "prob")
 auc<-roc(y_test,predictions[,2] )
 plot(auc)
+auc$auc
 
 
 
+getTree(rf, k=23, labelVar=TRUE)
 
-getTree(myrf, k=34, labelVar=TRUE)
 
 
+auc_value <- roc(y_test, predictions[,2])$auc
+auc_value
 
 ###### appendix tree
