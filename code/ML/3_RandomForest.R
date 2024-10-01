@@ -49,7 +49,8 @@ table(workers_final$mw_worker75)[2]/nrow(workers_final)
 
 ######## random forest Set Parameters
 param_combinations<- expand.grid(mtry= seq(40, 80 ,10) ,
-                                 maxnodes=seq(2, 40,5))
+                                 maxnodes= c(5, 40)    #  seq(3, 40,5)
+                                 )
 
 ### set parallel 
 num_cores <-  8
