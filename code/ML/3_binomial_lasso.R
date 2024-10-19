@@ -22,7 +22,14 @@ rm(list=ls())
 
 ########## paths
 
-root<- "C:\\Users\\Andres Felipe\\OneDrive - Universidad de los Andes\\Research Proyects\\ML_GEIH"
+
+if (getwd()=="/export/home/rcsguest/rcs_arengifojaramill/Documents/GitHub/ML_GEIH/code/ML") {
+  root<- "/export/home/rcsguest/rcs_arengifojaramill/Documents/GitHub/ML_GEIH"
+  
+}  else {
+  root<- "C:/Users/Andres Felipe/OneDrive - Universidad de los Andes/Research Proyects/ML_GEIH"
+}
+
 data<- paste0(root, "\\data")
 raw<- paste0(data, "\\raw")
 geih2012<- paste0(raw, "\\GEIH\\2012")
