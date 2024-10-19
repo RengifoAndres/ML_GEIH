@@ -78,9 +78,12 @@ num_cores <-  5
 cl <- makeCluster(num_cores)    # Create a cluster with available cores
 registerDoParallel(cl)          # Register the parallel backend
 
+## set folds 
+nfolds<- 5
+
 
   #for (i in 1:10) {
- cv_results_lasso_logit<- foreach(i= 1:10, .combine = rbind,  .packages = c( "tidyverse", "glmnet", "PRROC") ) %dopar% {
+ cv_results_lasso_logit<- foreach(i= 1:nfolds, .combine = rbind,  .packages = c( "tidyverse", "glmnet", "PRROC") ) %dopar% {
     
     train<- workers_final %>%
       filter(fold!=i )

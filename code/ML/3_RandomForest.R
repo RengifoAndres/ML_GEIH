@@ -56,9 +56,13 @@ num_cores <-  8
 cl <- makeCluster(num_cores)    # Create a cluster with available cores
 registerDoParallel(cl)          # Register the parallel backend
 
+
+## set folds 
+nfolds<- 5
+
 start_time <- Sys.time() ## set time to count
 
-cv_results_rf<- foreach(i= 1:10, .combine = rbind,  .packages = c( "tidyverse", "randomForest","PRROC") ) %dopar% {
+cv_results_rf<- foreach(i= 1:nfolds, .combine = rbind,  .packages = c( "tidyverse", "randomForest","PRROC") ) %dopar% {
   
   train<- workers_final %>%
     filter(fold!=i )
@@ -183,9 +187,9 @@ ggplot(summary2) +
 
 
 train<- workers_final %>%
-  filter(fold>5 )
+  filter(fold>2 )
 test<- workers_final %>%
-  filter(fold<=5 )
+  filter(fold<=2 )
 
 y<- train$mw_worker75
 X<- model.matrix(mw_worker75~. -fold, train )
