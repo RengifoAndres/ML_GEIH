@@ -127,6 +127,6 @@ workers %>% select(house, household, person,  fold) %>%
 saveRDS( workers,  file= paste0(clean , "\\employees_analysis.rds"))
 
 
-#### 
+#####
 # end 
 #####

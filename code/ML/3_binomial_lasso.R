@@ -45,7 +45,7 @@ workers<- readRDS(paste0(clean, "\\employees_analysis.rds"))
 
 discart<- c("house" , "household","person",   "Hogar", "P6016",  
             "oci", "job_type", "unionized" , "student", "monthly_mw50", "monthly_mw75",
-            "monthly_mw125","inglabo", "mw_worker125" , "mw_worker50" )
+            "monthly_mw125","inglabo", "mw_worker125" , "mw_worker50", "maxgrade", "schyears", "maxedulevel" )
 
 workers_final<-workers%>% select(-all_of(discart))
 table(workers_final$mw_worker75)[2]/nrow(workers_final)
