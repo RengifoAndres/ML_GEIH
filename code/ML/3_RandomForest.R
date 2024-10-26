@@ -47,12 +47,13 @@ table(workers_final$mw_worker75)[2]/nrow(workers_final)
 
 ######## random forest Set Parameters
 param_combinations<- expand.grid(mtry= seq(40, 80 ,10) ,
-                                 maxnodes= c(5, 40)    #  seq(3, 40,5)
+                                 maxnodes= c(5, 20)    #  seq(3, 40,5)
                                  )
 table(workers_final$fold)
 
 ### set parallel 
-num_cores <-  3
+
+num_cores <-  5
 cl <- makeCluster(num_cores)    # Create a cluster with available cores
 registerDoParallel(cl)          # Register the parallel backend
 
@@ -62,12 +63,12 @@ nfolds<- 5
 
 start_time <- Sys.time() ## set time to count
 
-cv_results_rf<- foreach(i= 1:nfolds, .combine = rbind,  .packages = c( "tidyverse", "randomForest","PRROC") ) %dopar% {
+cv_results_rf<- foreach(i= 1:5, .combine = rbind,  .packages = c( "tidyverse", "randomForest","PRROC") ) %dopar% {
   
   train<- workers_final %>%
-    filter(fold!=i )
+    filter(fold!= i )
   test<- workers_final %>%
-    filter(fold==i )
+    filter(fold== i )
   
   y<- train$mw_worker75
   X<- model.matrix(mw_worker75~. -fold, train )
@@ -187,9 +188,9 @@ ggplot(summary2) +
 
 
 train<- workers_final %>%
-  filter(fold>2 )
+  filter(fold!=5 )
 test<- workers_final %>%
-  filter(fold<=2 )
+  filter(fold==5 )
 
 y<- train$mw_worker75
 X<- model.matrix(mw_worker75~. -fold, train )
@@ -207,7 +208,7 @@ rf<- randomForest(x=X,
                   mtry= 20, 
                   maxnodes= 5,
                   importance= FALSE, 
-                  nodesize= 25)
+                  nodesize= 50)
 
 
 getTree(rf, k=1, labelVar=TRUE)
