@@ -49,9 +49,10 @@ table(workers_final$mw_worker75)[2]/nrow(workers_final)
 param_combinations<- expand.grid(mtry= seq(40, 80 ,10) ,
                                  maxnodes= c(5, 40)    #  seq(3, 40,5)
                                  )
+table(workers_final$fold)
 
 ### set parallel 
-num_cores <-  8
+num_cores <-  3
 cl <- makeCluster(num_cores)    # Create a cluster with available cores
 registerDoParallel(cl)          # Register the parallel backend
 
@@ -72,7 +73,7 @@ cv_results_rf<- foreach(i= 1:nfolds, .combine = rbind,  .packages = c( "tidyvers
   X<- model.matrix(mw_worker75~. -fold, train )
   X<- X[, 2:ncol(X)]
   X_test<- model.matrix(mw_worker75~. -fold, test )
-  X_test<- X[, 2:ncol(X_test)]
+  X_test<- X_test[, 2:ncol(X_test)]
   y_test<-  test$mw_worker75
   
   
@@ -202,8 +203,8 @@ y_test<-  test$mw_worker75
 
 rf<- randomForest(x=X, 
                   y=y, 
-                  ntree= 300, 
-                  mtry= 130, 
+                  ntree= 30, 
+                  mtry= 20, 
                   maxnodes= 5,
                   importance= FALSE, 
                   nodesize= 25)
