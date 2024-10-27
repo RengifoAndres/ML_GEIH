@@ -27,16 +27,15 @@ discart <- c("house", "household", "person", "Hogar", "P6016", "oci", "job_type"
 workers_final <- workers %>% select(-all_of(discart))
 
 # Random Forest Parameters
-param_combinations <- expand.grid(eta = c(0.01, 0.05, 0.3), 
-                                  max_depth = c(2, 3, 10), 
-                                  subsample = c(0.7, 0.9),
-                                  nrounds = 1000
+param_combinations <- expand.grid(eta = c(0.01, 0.05, 0.1), 
+                                  max_depth = c(2, 3, 5), 
+                                  subsample = c(0.7),
+                                  nrounds = c(1000, 1500)
 )
 
-table(workers_final$fold)
 
 # Set Parallelization
-num_cores <- 3
+num_cores <- 5
 cl <- makeCluster(num_cores)
 registerDoParallel(cl)
 
@@ -93,5 +92,59 @@ end_time <- Sys.time()
 execution_time <- end_time - start_time
 print(execution_time)
 
-# Display cv_results_xgb
-cv_results_xgb
+
+###### Merge model to parameters 
+
+param_combinations<- param_combinations %>%
+  mutate(model=row_number())
+
+cv_results_xgb<- cv_results_xgb %>%
+  full_join(param_combinations)
+
+############## create model-performance dataset
+
+summary <- cv_results_xgb %>%
+  group_by(model) %>%
+  summarise(
+    mean_auPR = mean(auPR),
+    se_auPR = sd(auPR) / sqrt(n()),
+    model = unique(model)  # Ensure we have the same iteration numbers
+  )
+
+
+summary<- summary %>%
+  full_join(param_combinations)
+
+best_param<-summary %>% select(any_of(colnames(param_combinations))) %>%
+  filter(row_number()==which.max(summary$mean_auPR))
+max_val<-summary %>% select(mean_auPR) %>%
+  filter(row_number()==which.max(summary$mean_auPR))
+
+max_val
+best_param
+
+
+
+
+# Combined plot with iteration number on x-axis and lambda as color scale
+ggplot(cv_results_xgb) +
+  geom_boxplot( aes(x = factor(model), y = auPR, fill=eta ), outlier.colour = "red", outlier.shape = 16, outlier.size = 2) +
+  geom_point(data = summary, aes(x = factor(model), y = mean_auPR), size = 1, color = "black") +
+  geom_errorbar(data = summary, aes(x = factor(model), ymin = mean_auPR - se_auPR, ymax = mean_auPR + se_auPR), width = 0.2, color = "blue") +
+  labs(title = "",
+       x = "Model",
+       y = "AUC", 
+       fill= "eta") +
+  scale_fill_gradient(low = "#FFDDC1", high = "#FF5500") +  # Scale color for the fill based on lambda
+  theme_classic(base_size = 15) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "right",  # Move legend to the right for better space utilization
+    axis.text.x = element_text(angle = 90, hjust = 1, size = 7),  # Rotate x-axis labels and adjust size
+    axis.text.y = element_text(size = 12),  # Adjust y-axis text size
+    axis.title = element_text(size = 14)
+  )
+
+
+
+
