@@ -146,5 +146,41 @@ ggplot(cv_results_xgb) +
   )
 
 
+############### Estimating final model. 
+test_out<-  readRDS(paste0(clean, "/employees_test.rds"))
+test_out<-  test_out %>% select(-all_of(discart))
+
+y_full <- as.numeric(workers_final$mw_worker75) - 1  # Convert factor to numeric
+X_full   <- model.matrix(mw_worker75 ~ . - fold, workers_final)[, -1]
+dfull <- xgb.DMatrix(data = X_full, label = y_full)
 
 
+y_out <- test_out$mw_worker75  # Not Convert factor to numeric
+X_out   <- model.matrix(mw_worker75 ~ . , test_out)[, -1] ## does not have fold
+
+
+params_final <- list(
+  objective = "binary:logistic",
+  eval_metric = "aucpr",  # Use AUC-PR as evaluation metric
+  eta = best_param$eta[1],
+  max_depth = best_param$max_depth[1],
+  subsample = best_param$subsample[1]
+)
+
+xgboost_final <- xgb.train(params = params_final, 
+                         data = dfull, 
+                        nrounds = best_param$nrounds[1], 
+                         verbose = 0)  # Suppress output
+
+xgboost_final_predictions <- predict(xgboost_final, X_out)
+
+# confusion matri
+p_load(caret)
+confusionMatrix(data = xgboost_final_predictions, reference = y_out, positive="Yes")
+
+auc<-roc(y_out,xgboost_final_predictions )
+plot(auc)
+auc$auc
+
+
+######### 

@@ -26,10 +26,6 @@ discart <- c("house", "household", "person", "Hogar", "P6016", "oci", "job_type"
 
 workers_final <- workers %>% select(-all_of(discart))
 
-# Normalize the data: Simplified for demonstration; consider a robust normalization strategy
-normalize <- function(x) (x - min(x)) / (max(x) - min(x))
-workers_final <- workers_final %>% 
-  mutate(across(-c(mw_worker75, fold), normalize))
 
 # Neural Network Parameters
 hidden_layer_sizes <- list(c(5), c(10), c(5, 5))  # Different combinations of hidden layers
@@ -84,3 +80,12 @@ print(execution_time)
 
 # Display cv_results_nn
 cv_results_nn
+
+
+####################
+
+
+
+
+
+

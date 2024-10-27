@@ -18,10 +18,10 @@ if (getwd()=="/export/home/rcsguest/rcs_arengifojaramill/Documents/GitHub/ML_GEI
   root<- "C:/Users/Andres Felipe/OneDrive - Universidad de los Andes/Research Proyects/ML_GEIH"
 }
 
-data<- paste0(root, "\\data")
-raw<- paste0(data, "\\raw")
-geih2012<- paste0(raw, "\\GEIH\\2012")
-clean<-  paste0(data, "\\clean_prediction\\2012")
+data<- paste0(root, "/data")
+raw<- paste0(data, "/raw")
+geih2012<- paste0(raw, "/GEIH/2012")
+clean<-  paste0(data, "/clean_prediction/2012")
 
 
 
@@ -100,9 +100,9 @@ length(unique(test$house))
 ### save data
 ##############
 
-saveRDS( leave_out,  file= paste0(clean, "\\employees_leave_out.rds"))
+saveRDS( leave_out,  file= paste0(clean, "/employees_leave_out.rds"))
 
-saveRDS( test,  file= paste0(clean, "\\employees_test.rds"))
+saveRDS( test,  file= paste0(clean, "/employees_test.rds"))
 
 ######### Part 2 generate Folds
 #### Save analysis data with folds
