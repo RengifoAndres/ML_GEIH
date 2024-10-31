@@ -51,7 +51,7 @@ train_rec <-
 #train_rec<- prep(train_rec, training = train)
 #pr_train<- bake(train_rec, train)
 
-set.seed(2)
+set.seed(267487)
 neural_net <- brulee_mlp(train_rec, 
                   data = train, 
                   epochs = 20, 
